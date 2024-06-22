@@ -3,7 +3,7 @@ const path = require('path');
 const {
     create,
     globals
-} = require('../../dawn/out/Debug/dawn.node');
+} = require('../../dawn_newest/out/Debug/Debug/dawn.node');
 Object.assign(globalThis, globals);
 let navigator = {
     gpu: create([]),
