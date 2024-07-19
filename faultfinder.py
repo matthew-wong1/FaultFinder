@@ -14,8 +14,8 @@ from pathlib import Path
 
 # Should first load the seen.log into a set. Then continuously update both the set and append to the file
 # For generated error report, should first hav a dictionary with error type as key, then list of files
-SEEN_ERRORS_PATH="D:/final_proj/FaultFinder/seen_errors.log"
-REPORTS_PATH="D:/final_proj/FaultFinder/reports.log"
+SEEN_ERRORS_PATH = "D:/final_proj/FaultFinder/seen_errors.log"
+REPORT_PATH = "D:/final_proj/FaultFinder/reports.log"
 
 
 def update_seen_errors(line_to_compare, seen_errors):
@@ -141,7 +141,21 @@ def get_seen_errors_as_set():
 
 
 def write_output_report(output_report):
-    pass
+    with open(REPORT_PATH, 'w') as file:
+
+        for report_num, report in enumerate(output_report):
+            if report_num == 0:
+                file.write("Unseen errors:\n")
+            else:
+                file.write("Seen errors:\n")
+
+            for error_type, affected_files in report.items():
+                num_affected_files = str(len(affected_files))
+                csv_of_affected_files = ", ".join(affected_files)
+                file.write(error_type + "(" + num_affected_files + "): " + csv_of_affected_files+"\n")
+
+            file.write("\n============================\n")
+
 
 
 def main():
