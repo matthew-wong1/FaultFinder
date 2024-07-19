@@ -26,7 +26,7 @@ def append_to_report(file_path, error_type):
     pass
 
 
-def parse_report_for_errors(report_folder_to_check):
+def parse_report_for_errors(report_folder_to_check, seen_errors):
     path = Path(report_folder_to_check)
 
     if not path.exists():
@@ -111,22 +111,34 @@ def parse_file(file_path):
                 break
 
 
-def parse_reports(report_folder_to_check, report_folder_to_compare):
+def parse_reports(report_folder_to_check, report_folder_to_compare, seen_errors):
     # Parse each report individually for errors  
     # Then go line by line 
 
     return
 
 
+def get_seen_errors_as_set():
+    seen_errors = set()
+    with open (SEEN_ERRORS_PATH, "r") as file:
+        for line in file.readlines():
+            seen_errors.add(line.lower())
+
+    return seen_errors
+
+
 def main():
     num_args = len(sys.argv)
     if 0 < num_args < 3:
         report_folder_to_check = sys.argv[0]
+
+        seen_errors = get_seen_errors_as_set()
+
         if num_args == 2:
             report_folder_to_compare = sys.argv[1]
-            parse_reports(report_folder_to_check, report_folder_to_compare)
+            parse_reports(report_folder_to_check, report_folder_to_compare, seen_errors)
         else:
-            parse_report_for_errors(report_folder_to_check)
+            parse_report_for_errors(report_folder_to_check, seen_errors)
         
     else:
         print("Usage: faultfinder.py <report_folder_to_check> <report_folder_to_compare (optional)>")
