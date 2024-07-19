@@ -12,7 +12,7 @@ from pathlib import Path
 # Files to manually check, their path, what the error was (differential or some other error eg "Detected Asan error or something")
 
 
-# Should first load the seen.log into a set. Then continuously update both the set and append to the file
+# Should first load the seen_errors.log into a set. Then continuously update both the set and append to the file
 # For generated error report, should first hav a dictionary with error type as key, then list of files
 SEEN_ERRORS_PATH = "D:/final_proj/FaultFinder/seen_errors.log"
 REPORT_PATH = "D:/final_proj/FaultFinder/reports.log"
@@ -133,7 +133,7 @@ def parse_reports(report_folder_to_check, report_folder_to_compare, seen_errors,
 
 def get_seen_errors_as_set():
     seen_errors = set()
-    with open (SEEN_ERRORS_PATH, "r") as file:
+    with open(SEEN_ERRORS_PATH, "r") as file:
         for line in file.readlines():
             seen_errors.add(line.lower())
 
@@ -160,7 +160,8 @@ def write_output_report(output_report):
 
 def main():
     num_args = len(sys.argv)
-    if 0 < num_args < 3:
+
+    if 1 < num_args < 4: # 1 and 4 because python counts the command itself as an argument
         report_folder_to_check = sys.argv[0]
 
         seen_errors = get_seen_errors_as_set()
