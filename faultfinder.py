@@ -16,9 +16,14 @@ from pathlib import Path
 SEEN_ERRORS_PATH="D:/final_proj/FaultFinder/seen_errors.log"
 REPORTS_PATH="D:/final_proj/FaultFinder/reports.log"
 
-def update_seen_errors(line_to_compare):
-    with open(SEEN_ERRORS_PATH, "a") as file:
+def update_seen_errors(line_to_compare, seen_errors):
+    if line_to_compare not in seen_errors:
+        return
 
+    seen_errors.append(line_to_compare)
+
+    with open(SEEN_ERRORS_PATH, "a") as seen_errors_file:
+        seen_errors_file.write(line_to_compare + "\n")
 
 
 def append_to_report(file_path, error_type):
@@ -41,12 +46,12 @@ def parse_report_for_errors(report_folder_to_check, seen_errors):
         if not file_path.is_file():
             continue
 
-        parse_file(file_path)
+        parse_file(file_path, seen_errors)
 
     return
 
 
-def parse_file(file_path):
+def parse_file(file_path, seen_errors):
     with open(file_path, 'r') as file:
         # Go through each line. If line contains error:
         lines = file.readlines()
@@ -102,7 +107,7 @@ def parse_file(file_path):
                 continue
             # Elif error in line: maybe from your custom printing eg validationerror
 
-            update_seen_errors(line_to_compare)
+            update_seen_errors(line_to_compare, seen_errors)
 
             # Finally Append file and type of error to report eg ASAN error (5): List of reports
             append_to_report(file_path, error_type)
