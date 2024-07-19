@@ -1,5 +1,6 @@
 import csv
 import sys
+from collections import defaultdict
 from pathlib import Path
 
 # Deduplication (store as CSV?)
@@ -16,22 +17,29 @@ from pathlib import Path
 SEEN_ERRORS_PATH="D:/final_proj/FaultFinder/seen_errors.log"
 REPORTS_PATH="D:/final_proj/FaultFinder/reports.log"
 
-def update_seen_errors(line_to_compare, seen_errors):
-    if line_to_compare not in seen_errors:
-        return
 
-    seen_errors.append(line_to_compare)
+def update_seen_errors(line_to_compare, seen_errors):
+    if line_to_compare in seen_errors:
+        return True
+
+    seen_errors.add(line_to_compare)
 
     with open(SEEN_ERRORS_PATH, "a") as seen_errors_file:
         seen_errors_file.write(line_to_compare + "\n")
 
-
-def append_to_report(file_path, error_type):
-
-    pass
+    return False
 
 
-def parse_report_for_errors(report_folder_to_check, seen_errors):
+def update_report(error_file_path, error_type, output_report, seen_before):
+    if seen_before:
+        report_to_update = output_report[1]
+    else:
+        report_to_update = output_report[0]
+
+    report_to_update[error_type].append(error_file_path)
+
+
+def parse_report_for_errors(report_folder_to_check, seen_errors, output_report):
     path = Path(report_folder_to_check)
 
     if not path.exists():
@@ -46,12 +54,12 @@ def parse_report_for_errors(report_folder_to_check, seen_errors):
         if not file_path.is_file():
             continue
 
-        parse_file(file_path, seen_errors)
+        parse_file(file_path, seen_errors, output_report)
 
     return
 
 
-def parse_file(file_path, seen_errors):
+def parse_file(file_path, seen_errors, output_report):
     with open(file_path, 'r') as file:
         # Go through each line. If line contains error:
         lines = file.readlines()
@@ -107,16 +115,16 @@ def parse_file(file_path, seen_errors):
                 continue
             # Elif error in line: maybe from your custom printing eg validationerror
 
-            update_seen_errors(line_to_compare, seen_errors)
+            seen_before = update_seen_errors(line_to_compare, seen_errors)
 
             # Finally Append file and type of error to report eg ASAN error (5): List of reports
-            append_to_report(file_path, error_type)
+            update_report(file_path, error_type, output_report, seen_before)
 
             if check_next_file:
                 break
 
 
-def parse_reports(report_folder_to_check, report_folder_to_compare, seen_errors):
+def parse_reports(report_folder_to_check, report_folder_to_compare, seen_errors, output_report):
     # Parse each report individually for errors  
     # Then go line by line 
 
@@ -132,19 +140,28 @@ def get_seen_errors_as_set():
     return seen_errors
 
 
+def write_output_report(output_report):
+    pass
+
+
 def main():
     num_args = len(sys.argv)
     if 0 < num_args < 3:
         report_folder_to_check = sys.argv[0]
 
         seen_errors = get_seen_errors_as_set()
+        # 0 contains unseen errors, 1 contains seen errors
+        output_report = []
+        output_report[0] = defaultdict(list)
+        output_report[1] = defaultdict(list)
 
         if num_args == 2:
             report_folder_to_compare = sys.argv[1]
-            parse_reports(report_folder_to_check, report_folder_to_compare, seen_errors)
+            parse_reports(report_folder_to_check, report_folder_to_compare, seen_errors, output_report)
         else:
-            parse_report_for_errors(report_folder_to_check, seen_errors)
-        
+            parse_report_for_errors(report_folder_to_check, seen_errors, output_report)
+
+        write_output_report(output_report)
     else:
         print("Usage: faultfinder.py <report_folder_to_check> <report_folder_to_compare (optional)>")
 
