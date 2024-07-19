@@ -36,7 +36,7 @@ def update_report(error_file_path, error_type, output_report, seen_before):
     else:
         report_to_update = output_report[0]
 
-    report_to_update[error_type].append(error_file_path)
+    report_to_update[error_type].append(str(error_file_path))
 
 
 def parse_report_for_errors(report_folder_to_check, seen_errors, output_report):
@@ -67,7 +67,7 @@ def parse_file(file_path, seen_errors, output_report):
         error_type = None
 
         for i, line in enumerate(lines):
-            print(line)
+            # print(line)
             line_to_check = line.lower()
             line_to_compare = None
 
@@ -100,7 +100,7 @@ def parse_file(file_path, seen_errors, output_report):
 
                 error_type = "Program abortion"
 
-            elif "fatal" or "assertion" in line_to_check:
+            elif "fatal" in line_to_check or "assertion" in line_to_check:
                 # Fatal error - get the fatal error line. and end.
                 line_to_compare = line_to_check
                 check_next_file = True
@@ -109,7 +109,7 @@ def parse_file(file_path, seen_errors, output_report):
                     error_type = "Fatal error"
                 else:
                     error_type = "Assertion failure"
-            elif "error" or "failed" in line_to_check:
+            elif "error" in line_to_check or "failed" in line_to_check:
                 line_to_compare = line_to_check
                 error_type = "Unexpected error/failure"
             else:
