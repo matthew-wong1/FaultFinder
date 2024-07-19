@@ -146,14 +146,15 @@ def write_output_report(output_report):
 
         for report_num, report in enumerate(output_report):
             if report_num == 0:
-                file.write("Unseen errors:\n")
+                file.write("Unseen errors:")
             else:
-                file.write("Seen errors:\n")
+                file.write("Seen errors:")
 
             for error_type, affected_files in report.items():
                 num_affected_files = str(len(affected_files))
                 csv_of_affected_files = ", ".join(affected_files)
-                file.write(error_type + "(" + num_affected_files + "): " + csv_of_affected_files+"\n")
+                file.write("\n" + error_type + "(" + num_affected_files + "): \n")
+                file.write(csv_of_affected_files+"\n")
 
             file.write("\n============================\n")
 
