@@ -47,7 +47,7 @@ def parse_report_for_errors(report_folder_to_check, seen_errors, output_report):
         return
     
     if not path.is_dir():
-        print("Error: The provided path is not a directory")
+        print("Error: The provided path is not a directory: " + report_folder_to_check)
         return
     
     for file_path in path.iterdir():
@@ -163,14 +163,14 @@ def main():
     num_args = len(sys.argv)
 
     if 1 < num_args < 4: # 1 and 4 because python counts the command itself as an argument
-        report_folder_to_check = sys.argv[0]
+        report_folder_to_check = sys.argv[1]
 
         seen_errors = get_seen_errors_as_set()
         # 0 contains unseen errors, 1 contains seen errors
         output_report = [defaultdict(list), defaultdict(list)]
 
         if num_args == 3:
-            report_folder_to_compare = sys.argv[1]
+            report_folder_to_compare = sys.argv[2]
             parse_reports(report_folder_to_check, report_folder_to_compare, seen_errors, output_report)
         else:
             parse_report_for_errors(report_folder_to_check, seen_errors, output_report)
