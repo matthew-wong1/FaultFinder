@@ -67,6 +67,7 @@ def parse_file(file_path, seen_errors, output_report):
         error_type = None
 
         for i, line in enumerate(lines):
+            print(line)
             line_to_check = line.lower()
             line_to_compare = None
 
@@ -166,11 +167,9 @@ def main():
 
         seen_errors = get_seen_errors_as_set()
         # 0 contains unseen errors, 1 contains seen errors
-        output_report = []
-        output_report[0] = defaultdict(list)
-        output_report[1] = defaultdict(list)
+        output_report = [defaultdict(list), defaultdict(list)]
 
-        if num_args == 2:
+        if num_args == 3:
             report_folder_to_compare = sys.argv[1]
             parse_reports(report_folder_to_check, report_folder_to_compare, seen_errors, output_report)
         else:
