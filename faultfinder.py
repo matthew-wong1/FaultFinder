@@ -67,8 +67,9 @@ def parse_file(file_path, seen_errors, output_report):
         error_type = None
 
         for i, line in enumerate(lines):
-            # print(line)
             line_to_check = line.lower()
+            # if line_to_check.strip() != "warning: getproperties is deprecated, use getinfo instead.":
+            #     print(line_to_check)
             line_to_compare = None
 
             if "sanitizer" in line_to_check:
@@ -125,13 +126,6 @@ def parse_file(file_path, seen_errors, output_report):
                 break
 
 
-def parse_reports(report_folder_to_check, report_folder_to_compare, seen_errors, output_report):
-    # Parse each report individually for errors  
-    # Then go line by line 
-
-    return
-
-
 def get_seen_errors_as_set():
     seen_errors = set()
     with open(SEEN_ERRORS_PATH, "r") as file:
@@ -158,6 +152,26 @@ def write_output_report(output_report):
 
             file.write("\n============================\n")
 
+
+def differentially_compare_reports(report_folder_to_check, report_folder_to_compare, output_report):
+    # 1) loop over all files in report_folder_to_check
+    # 2) See if there is an equivalently named file in report_folder_to_compare. If not say x was not compared to anything as missing equiavlent file
+    # 3 Extract lines of both report files into a list
+    # 4) Loop over all lines in file
+    # 5) If contains substr error... see if error exists in the other file
+    # 6) If contains substr comptue output: see if is exactly the same
+    pass
+
+
+def parse_reports(report_folder_to_check, report_folder_to_compare, seen_errors, output_report):
+    # Parse each report individually for errors  
+    parse_report_for_errors(report_folder_to_check, seen_errors, output_report)
+    parse_report_for_errors(report_folder_to_compare, seen_errors, output_report)
+
+    # Then compare line by line 
+    differentially_compare_reports(report_folder_to_check, report_folder_to_compare, output_report)
+
+    return
 
 
 def main():
