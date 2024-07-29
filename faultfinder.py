@@ -60,6 +60,8 @@ def parse_report_for_errors(report_folder_to_check, seen_errors, output_report):
 
 
 def parse_file(file_path, seen_errors, output_report):
+    lines_of_interest = defaultdict(list)
+    errors_enabled = False
     with open(file_path, 'r') as file:
         # Go through each line. If line contains error:
         lines = file.readlines()
@@ -72,6 +74,9 @@ def parse_file(file_path, seen_errors, output_report):
             #     print(line_to_check)
             line_to_compare = None
 
+            if "Errors enabled" in line_to_check:
+                errors_enabled = True
+                continue
             if "sanitizer" in line_to_check:
                 substring_to_check_for = None
                 if "leak" in line_to_check:
@@ -113,18 +118,36 @@ def parse_file(file_path, seen_errors, output_report):
             elif "error" in line_to_check or "failed" in line_to_check:
                 line_to_compare = line_to_check
                 error_type = "Unexpected error/failure"
+            elif "has output" in line_to_check:
+                lines_of_interest["output"].append(line_to_check)
+                continue
+            elif "Exit code" in line_to_check:
+                if "124" in line_to_check:
+                    error_type = "Timeout"
+                    line_to_compare = "timeout"
+                elif ("1" in line_to_check) and not lines_of_interest:
+                    error_type = "Unexpected error/failure"
+                    line_to_compare = line_to_check
             else:
                 continue
-            # Elif error in line: maybe from your custom printing eg validationerror
+
 
             seen_before = update_seen_errors(line_to_compare, seen_errors)
 
             # Finally Append file and type of error to report eg ASAN error (5): List of reports
             update_report(file_path, error_type, output_report, seen_before)
 
+            # update lines of interest dictionary
+            lines_of_interest[error_type].append(line_to_compare)
+
             if check_next_file:
                 break
 
+    # als one where it knows if errors were generated (check for timeout with error code)
+    if not errors_enabled and lines_of_interest:
+        output_report[1]["Errors present when disabled"].append(str(file_path))
+
+    return lines_of_interest
 
 def get_seen_errors_as_set():
     seen_errors = set()
@@ -153,14 +176,45 @@ def write_output_report(output_report):
             file.write("\n============================\n")
 
 
-def differentially_compare_reports(report_folder_to_check, report_folder_to_compare, output_report):
-    # 1) loop over all files in report_folder_to_check
-    # 2) See if there is an equivalently named file in report_folder_to_compare. If not say x was not compared to anything as missing equiavlent file
+def compare_two_reports(file_path, file_to_compare):
+
     # 3 Extract lines of both report files into a list
     # 4) Loop over all lines in file
     # 5) If contains substr error... see if error exists in the other file
     # 6) If contains substr comptue output: see if is exactly the same
-    pass
+
+
+def differentially_compare_reports(report_folder_to_check, report_folder_to_compare, output_report):
+    # different design - loop over all files in folder a), then check if other exists in folder b.
+    # then have the parsing reutrn a list of the errors or maybe a map. Of type of error - then list string of errors in that category
+    #
+
+    # 1) loop over all files in report_folder_to_check
+    path = Path(report_folder_to_check)
+
+    if not path.exists():
+        print("Error: the provided path does not exist")
+        return
+
+    if not path.is_dir():
+        print("Error: The provided path is not a directory: " + report_folder_to_check)
+        return
+
+    for file_path in path.iterdir():
+        if not file_path.is_file():
+            print(str(file_path) + " skipped because it is not a file")
+            continue
+
+        file_to_compare = report_folder_to_compare + file_path.name
+
+        # 2) See if there is an equivalently named file in report_folder_to_compare. If not say x was not compared to anything as missing equiavlent file
+        if not file_to_compare.isfile():
+            print(str(file_path) + " skipped because it does not have an equivalent file to compare to")
+            continue
+
+        compare_two_reports(file_path, file_to_compare)
+
+    return
 
 
 def parse_reports(report_folder_to_check, report_folder_to_compare, seen_errors, output_report):
