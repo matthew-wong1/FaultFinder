@@ -39,7 +39,7 @@ def update_report(error_file_path, error_type, output_report, seen_before):
     report_to_update[error_type].append(str(error_file_path))
 
 
-def parse_report_for_errors(report_folder_to_check, seen_errors, output_report):
+def parse_report_folder_for_errors(report_folder_to_check, seen_errors, output_report):
     path = Path(report_folder_to_check)
 
     if not path.exists():
@@ -77,7 +77,11 @@ def parse_file(file_path, seen_errors, output_report):
             if "Errors enabled" in line_to_check:
                 errors_enabled = True
                 continue
-            if "sanitizer" in line_to_check:
+            # Storing any validation errors
+            elif "::" in line_to_check or ("[" in line_to_check and "]" in line_to_check):
+                error_type = "Validation error"
+                line_to_compare = line_to_check
+            elif "sanitizer" in line_to_check:
                 substring_to_check_for = None
                 if "leak" in line_to_check:
                     # Leak San: Find #0 line.
@@ -176,18 +180,19 @@ def write_output_report(output_report):
             file.write("\n============================\n")
 
 
-def compare_two_reports(file_path, file_to_compare):
-
-    # 3 Extract lines of both report files into a list
-    # 4) Loop over all lines in file
-    # 5) If contains substr error... see if error exists in the other file
-    # 6) If contains substr comptue output: see if is exactly the same
-
-
 def differentially_compare_reports(report_folder_to_check, report_folder_to_compare, output_report):
     # different design - loop over all files in folder a), then check if other exists in folder b.
     # then have the parsing reutrn a list of the errors or maybe a map. Of type of error - then list string of errors in that category
-    #
+
+    # 4) Loop over all lines in file
+    # 5) If contains substr error... see if error exists in the other file
+    # 6) If contains substr comptue output: see if is exactly the same
+    pass
+
+def parse_reports(report_folder_to_check, report_folder_to_compare, seen_errors, output_report):
+    # Parse each report individually for errors  
+    # parse_report_for_errors(report_folder_to_check, seen_errors, output_report)
+    # parse_report_for_errors(report_folder_to_compare, seen_errors, output_report)
 
     # 1) loop over all files in report_folder_to_check
     path = Path(report_folder_to_check)
@@ -212,18 +217,12 @@ def differentially_compare_reports(report_folder_to_check, report_folder_to_comp
             print(str(file_path) + " skipped because it does not have an equivalent file to compare to")
             continue
 
-        compare_two_reports(file_path, file_to_compare)
+        # 3 Extract lines of both report files into a list
+        report_a_output = parse_file(file_path, seen_errors, output_report)
+        report_b_output = parse_file(file_to_compare, seen_errors, output_report)
 
-    return
-
-
-def parse_reports(report_folder_to_check, report_folder_to_compare, seen_errors, output_report):
-    # Parse each report individually for errors  
-    parse_report_for_errors(report_folder_to_check, seen_errors, output_report)
-    parse_report_for_errors(report_folder_to_compare, seen_errors, output_report)
-
-    # Then compare line by line 
-    differentially_compare_reports(report_folder_to_check, report_folder_to_compare, output_report)
+        # Compare differentially line by line
+        differentially_compare_reports(report_a_output, report_b_output, output_report)
 
     return
 
@@ -242,7 +241,7 @@ def main():
             report_folder_to_compare = sys.argv[2]
             parse_reports(report_folder_to_check, report_folder_to_compare, seen_errors, output_report)
         else:
-            parse_report_for_errors(report_folder_to_check, seen_errors, output_report)
+            parse_report_folder_for_errors(report_folder_to_check, seen_errors, output_report)
 
         write_output_report(output_report)
     else:
