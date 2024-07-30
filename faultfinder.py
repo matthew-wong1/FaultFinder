@@ -1,6 +1,5 @@
-import csv
 import sys
-from collections import defaultdict
+from collections import defaultdict, Counter
 from pathlib import Path
 
 # Deduplication (store as CSV?)
@@ -59,6 +58,50 @@ def parse_report_folder_for_errors(report_folder_to_check, seen_errors, output_r
     return
 
 
+def parse_wgpu_validation_error(full_validation_error):
+    # wgpu: in format eg device::create_texture error
+    # need to get all the chars to the left of (until colon) and right of underscore (until space) to get call name
+    # get all chars before :: to get object name
+    formatted = ""
+
+    for char in full_validation_error:
+        if char == " ":
+            break
+
+        if char != ":" and char != "_":
+            formatted += char
+
+    return formatted
+
+
+def parse_dawn_validation_error(full_validation_error):
+    # dawn: [Queue].WriteBuffer()
+    formatted = ""
+
+    for char in full_validation_error:
+        if char == "(":
+            break
+
+        if char != "[" and char != "]":
+            formatted += char
+
+    return formatted
+
+
+def format_validation_error(full_validation_error):
+
+    if ("::" in full_validation_error):
+        formatted_error = parse_wgpu_validation_error(full_validation_error)
+    else:
+        formatted_error = parse_dawn_validation_error(full_validation_error)
+
+    # Label matching disabled for now until deno updates
+    # Dawn labels always between double quotes
+
+    # then to lower and return the new string
+    return formatted_error.lower()
+
+
 def parse_file(file_path, seen_errors, output_report):
     lines_of_interest = defaultdict(list)
     errors_enabled = False
@@ -80,7 +123,19 @@ def parse_file(file_path, seen_errors, output_report):
             # Storing any validation errors
             elif "::" in line_to_check or ("[" in line_to_check and "]" in line_to_check):
                 error_type = "Validation error"
-                line_to_compare = line_to_check
+                full_validation_error = line_to_check
+
+                if "While calling" in lines[i + 1]:
+                    full_validation_error += lines[i+1]
+
+                # Format full validation error into form: label
+                line_to_compare = format_validation_error(full_validation_error)
+
+                lines_of_interest[error_type].append(line_to_compare)
+
+                # don't update report
+                continue
+
             elif "sanitizer" in line_to_check:
                 substring_to_check_for = None
                 if "leak" in line_to_check:
@@ -168,8 +223,10 @@ def write_output_report(output_report):
         for report_num, report in enumerate(output_report):
             if report_num == 0:
                 file.write("Unseen errors:")
-            else:
+            elif report_num == 1:
                 file.write("Seen errors:")
+            else:
+                file.write("Differing errors:")
 
             for error_type, affected_files in report.items():
                 num_affected_files = str(len(affected_files))
@@ -180,20 +237,27 @@ def write_output_report(output_report):
             file.write("\n============================\n")
 
 
-def differentially_compare_reports(report_folder_to_check, report_folder_to_compare, output_report):
+def differentially_compare_reports(report_a_output, report_b_output, report_a_path, report_b_path, output_report):
     # different design - loop over all files in folder a), then check if other exists in folder b.
     # then have the parsing reutrn a list of the errors or maybe a map. Of type of error - then list string of errors in that category
 
-    # 4) Loop over all lines in file
-    # 5) If contains substr error... see if error exists in the other file
-    # 6) If contains substr comptue output: see if is exactly the same
-    pass
+    # report outputs are in the form of a dictionary (error_type: list of errors associated). Parse through each differently
+
+    for error_type, errors_list in report_a_output:
+        have_same_errors = True
+        report_b_output_errors_list = report_b_output[error_type]
+
+        have_same_errors = Counter(errors_list) == Counter(report_b_output_errors_list)
+
+        if (have_same_errors):
+            continue
+
+
+        # update error report
+        differential_errors = output_report[2]
+        differential_errors["Differing " + error_type].append(str(report_a_path) + " & " + str(report_b_path))
 
 def parse_reports(report_folder_to_check, report_folder_to_compare, seen_errors, output_report):
-    # Parse each report individually for errors  
-    # parse_report_for_errors(report_folder_to_check, seen_errors, output_report)
-    # parse_report_for_errors(report_folder_to_compare, seen_errors, output_report)
-
     # 1) loop over all files in report_folder_to_check
     path = Path(report_folder_to_check)
 
@@ -222,7 +286,7 @@ def parse_reports(report_folder_to_check, report_folder_to_compare, seen_errors,
         report_b_output = parse_file(file_to_compare, seen_errors, output_report)
 
         # Compare differentially line by line
-        differentially_compare_reports(report_a_output, report_b_output, output_report)
+        differentially_compare_reports(report_a_output, report_b_output, file_path, file_to_compare, output_report)
 
     return
 
@@ -235,7 +299,7 @@ def main():
 
         seen_errors = get_seen_errors_as_set()
         # 0 contains unseen errors, 1 contains seen errors
-        output_report = [defaultdict(list), defaultdict(list)]
+        output_report = [defaultdict(list), defaultdict(list), defaultdict(list)]
 
         if num_args == 3:
             report_folder_to_compare = sys.argv[2]
