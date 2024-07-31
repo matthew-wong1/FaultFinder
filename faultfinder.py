@@ -117,8 +117,10 @@ def parse_file(file_path, seen_errors, output_report):
             #     print(line_to_check)
             line_to_compare = None
 
-            if "Errors enabled" in line_to_check:
+            if "errors enabled" in line_to_check:
                 errors_enabled = True
+                continue
+            elif "errors disabled" in line_to_check:
                 continue
             # Storing any validation errors
             elif "::" in line_to_check or ("[" in line_to_check and "]" in line_to_check):
@@ -180,7 +182,7 @@ def parse_file(file_path, seen_errors, output_report):
             elif "has output" in line_to_check:
                 lines_of_interest["output"].append(line_to_check)
                 continue
-            elif "Exit code" in line_to_check:
+            elif "exit code" in line_to_check:
                 if "124" in line_to_check:
                     error_type = "Timeout"
                     line_to_compare = "timeout"
