@@ -270,9 +270,10 @@ def write_output_report(output_report):
                 file.write("UNSEEN ERRORS:")
                 file.write("\n============================\n")
             elif report_num == 1:
-                file.write("\n============================\n")
-                file.write("SEEN ERRORS:")
-                file.write("\n============================\n")
+                continue
+                # file.write("\n============================\n")
+                # file.write("SEEN ERRORS:")
+                # file.write("\n============================\n")
             else:
                 file.write("\n============================\n")
                 file.write("DIFFERENTIAL DISCREPANCIES:")

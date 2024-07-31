@@ -657,25 +657,6 @@ dawn:
 
 
 ============================
-SEEN ERRORS:
-============================
-
-Unexpected error/failure(11): 
-wgpu: 
-	53.log, 
-	172.log, 
-	209.log, 
-	279.log, 
-	330.log, 
-	336.log, 
-	509.log, 
-	512.log, 
-	541.log, 
-	564.log, 
-	813.log, 
-
-
-============================
 DIFFERENTIAL DISCREPANCIES:
 ============================
 
