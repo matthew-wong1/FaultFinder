@@ -312,8 +312,9 @@ def differentially_compare_reports(report_a_output, report_b_output, report_a_pa
     for error_type, errors_list in report_a_output.items():
         report_b_output_errors_list = report_b_output[error_type]
 
-        if error_type == "Validation error" and ("Operation error" in report_a_output[error_type] or "Operation error" in report_b_output):
-            continue
+        if "Operation error" in report_a_output[error_type] or "Operation error" in report_b_output:
+            if error_type == "Validation error" or error_type == "output":
+                continue
 
         if error_type == "Operation error":
             continue
