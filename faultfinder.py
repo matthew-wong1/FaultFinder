@@ -106,14 +106,22 @@ def format_validation_error(full_validation_error):
 def parse_file(file_path, seen_errors, output_report):
     lines_of_interest = defaultdict(list)
     errors_enabled = False
+    skip_next_line = False
 
     with open(file_path, 'r') as file:
         # Go through each line. If line contains error:
         lines = file.readlines()
         check_next_file = False
         error_type = None
+        skip_next_line = False
+
+
 
         for i, line in enumerate(lines):
+            if skip_next_line:
+                skip_next_line = False
+                continue
+
             line_to_check = line.lower()
             # if line_to_check.strip() != "warning: getproperties is deprecated, use getinfo instead.":
             #     print(line_to_check)
@@ -127,6 +135,7 @@ def parse_file(file_path, seen_errors, output_report):
             # Storing any validation errors
             elif "out of memory:" in line_to_check:
                 errors_enabled = True
+                skip_next_line = True
                 continue
             elif "::" in line_to_check or ("[" in line_to_check and "]" in line_to_check):
                 error_type = "Validation error"

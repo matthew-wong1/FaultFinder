@@ -645,10 +645,7 @@ wgpu:
 	946.log, 
 
 
-Unexpected error/failure(3): 
-dawn: 
-	816.log, 
-
+Unexpected error/failure(2): 
 wgpu: 
 	665.log, 
 	816.log, 
@@ -663,20 +660,7 @@ dawn:
 SEEN ERRORS:
 ============================
 
-Unexpected error/failure(22): 
-dawn: 
-	53.log, 
-	172.log, 
-	209.log, 
-	279.log, 
-	330.log, 
-	336.log, 
-	509.log, 
-	512.log, 
-	541.log, 
-	564.log, 
-	813.log, 
-
+Unexpected error/failure(11): 
 wgpu: 
 	53.log, 
 	172.log, 
@@ -694,22 +678,6 @@ wgpu:
 ============================
 DIFFERENTIAL DISCREPANCIES:
 ============================
-
-Differing Unexpected error/failure(12): 
-dawn: 
-	53.log, 
-	172.log, 
-	209.log, 
-	279.log, 
-	330.log, 
-	336.log, 
-	509.log, 
-	512.log, 
-	541.log, 
-	564.log, 
-	813.log, 
-	816.log, 
-
 
 Differing Validation error(10): 
 dawn: 

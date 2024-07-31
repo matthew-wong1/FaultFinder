@@ -1,5 +1,3 @@
-failed to allocate texture.
-
 typeerror: failed to construct 'gpuoutofmemoryerror': 1 argument required, but only 0 present.
 
     at new gpuoutofmemoryerror (ext:deno_webgpu/01_webgpu.js:308:12)
