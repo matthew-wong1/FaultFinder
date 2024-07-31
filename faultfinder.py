@@ -35,7 +35,7 @@ def update_report(error_file_path, error_type, output_report, seen_before):
     else:
         report_to_update = output_report[0]
 
-    report_to_update[error_type].append(str(error_file_path))
+    report_to_update[error_type].add(str(error_file_path))
 
 
 def parse_report_folder_for_errors(report_folder_to_check, seen_errors, output_report):
@@ -105,6 +105,7 @@ def format_validation_error(full_validation_error):
 def parse_file(file_path, seen_errors, output_report):
     lines_of_interest = defaultdict(list)
     errors_enabled = False
+
     with open(file_path, 'r') as file:
         # Go through each line. If line contains error:
         lines = file.readlines()
@@ -123,7 +124,10 @@ def parse_file(file_path, seen_errors, output_report):
             elif "errors disabled" in line_to_check:
                 continue
             # Storing any validation errors
-            elif "::" in line_to_check or ("[" in line_to_check and "]" in line_to_check) or ("operationerror" in line_to_check):
+            elif "out of memory:" in line_to_check:
+                errors_enabled = True
+                continue
+            elif "::" in line_to_check or ("[" in line_to_check and "]" in line_to_check):
                 error_type = "Validation error"
                 full_validation_error = line_to_check
 
@@ -137,7 +141,13 @@ def parse_file(file_path, seen_errors, output_report):
 
                 # don't update report
                 continue
-
+            elif "operationerror" in line_to_check:
+                error_type = "Validation error"
+                line_to_compare = line_to_check
+                lines_of_interest[error_type].append(line_to_compare)
+                lines_of_interest["Operation error"].append(True)
+                # don't update report
+                continue
             elif "sanitizer" in line_to_check:
                 substring_to_check_for = None
                 if "leak" in line_to_check:
@@ -176,14 +186,16 @@ def parse_file(file_path, seen_errors, output_report):
                     error_type = "Fatal error"
                 else:
                     error_type = "Assertion failure"
-            elif "error" in line_to_check or "failed" in line_to_check:
+            elif "error" in line_to_check or "failed" in line_to_check or "panic" in line_to_check:
                 line_to_compare = line_to_check
                 error_type = "Unexpected error/failure"
             elif "has output" in line_to_check:
                 lines_of_interest["output"].append(line_to_check)
                 continue
             elif "exit code" in line_to_check:
-                if "124" in line_to_check:
+                if "0" in line_to_check:
+                    continue
+                elif "124" in line_to_check:
                     error_type = "Timeout"
                     line_to_compare = "timeout"
                 elif ("1" in line_to_check) and not lines_of_interest:
@@ -191,7 +203,6 @@ def parse_file(file_path, seen_errors, output_report):
                     line_to_compare = line_to_check
             else:
                 continue
-
 
             seen_before = update_seen_errors(line_to_compare, seen_errors)
 
@@ -206,7 +217,7 @@ def parse_file(file_path, seen_errors, output_report):
 
     # als one where it knows if errors were generated (check for timeout with error code)
     if not errors_enabled and lines_of_interest:
-        output_report[1]["Errors present when disabled"].append(str(file_path))
+        output_report[0]["Errors present when disabled"].add(str(file_path))
 
     return lines_of_interest
 
@@ -246,8 +257,13 @@ def differentially_compare_reports(report_a_output, report_b_output, report_a_pa
     # report outputs are in the form of a dictionary (error_type: list of errors associated). Parse through each differently
 
     for error_type, errors_list in report_a_output.items():
-        have_same_errors = True
         report_b_output_errors_list = report_b_output[error_type]
+
+        if error_type == "Validation error" and ("Operation error" in report_a_output[error_type] or "Operation error" in report_b_output):
+            continue
+
+        if error_type == "Operation error":
+            continue
 
         have_same_errors = Counter(errors_list) == Counter(report_b_output_errors_list)
 
@@ -257,7 +273,7 @@ def differentially_compare_reports(report_a_output, report_b_output, report_a_pa
 
         # update error report
         differential_errors = output_report[2]
-        differential_errors["Differing " + error_type].append(str(report_a_path) + " & " + str(report_b_path))
+        differential_errors["Differing " + error_type].add(str(report_a_path))
 
 def parse_reports(report_folder_to_check, report_folder_to_compare, seen_errors, output_report):
     # 1) loop over all files in report_folder_to_check
@@ -301,7 +317,7 @@ def main():
 
         seen_errors = get_seen_errors_as_set()
         # 0 contains unseen errors, 1 contains seen errors
-        output_report = [defaultdict(list), defaultdict(list), defaultdict(list)]
+        output_report = [defaultdict(set), defaultdict(set), defaultdict(set)]
 
         if num_args == 3:
             report_folder_to_compare = sys.argv[2]

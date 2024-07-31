@@ -1,11 +1,3 @@
-// errors disabled
-
-operationerror: failed to execute 'createrenderpipeline' on 'gpudevice': fragment shader module belongs to a different device than this.
-
-operationerror: failed to execute 'submit' on 'gpuqueue': command buffer 1 belongs to a different device than this.
-
-operationerror: failed to execute 'createbindgroup' on 'gpudevice': layout belongs to a different device than this.
-
 failed to allocate texture.
 
 typeerror: failed to construct 'gpuoutofmemoryerror': 1 argument required, but only 0 present.
@@ -14,23 +6,7 @@ typeerror: failed to construct 'gpuoutofmemoryerror': 1 argument required, but o
 
     at innergpudevice.pusherror (ext:deno_webgpu/01_webgpu.js:1001:28)
 
-operationerror: failed to execute 'setpipeline' on 'gpurenderpassencoder': argument 1 belongs to a different device than this.
-
-operationerror: failed to execute 'beginrenderpass' on 'gpucommandencoder': texture view for color attachment 1 belongs to a different device than this.
-
-operationerror: failed to execute 'writebuffer' on 'gpuqueue': argument 1 belongs to a different device than this.
-
-operationerror: failed to execute 'createcomputepipeline' on 'gpudevice': compute shader module belongs to a different device than this.
-
-operationerror: failed to execute 'setpipeline' on 'gpucomputepassencoder': argument 1 belongs to a different device than this.
-
-operationerror: failed to execute 'setbindgroup' on 'gpucomputepassencoder': argument 2 belongs to a different device than this.
-
 summary: addresssanitizer: heap-use-after-free asyncrunner.cpp:63 in wgpu::binding::asyncrunner::queuetick(napi::env)::$_0::operator()(napi::callbackinfo const&) const
-
-operationerror: failed to execute 'setvertexbuffer' on 'gpurenderpassencoder': argument 2 belongs to a different device than this.
-
-operationerror: failed to execute 'copybuffertobuffer' on 'gpucommandencoder': argument 1 belongs to a different device than this.
 
 failed to wait for the device: device is lost
 
