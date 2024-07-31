@@ -1,3 +1,4 @@
+import re
 import sys
 from collections import defaultdict, Counter
 from pathlib import Path
@@ -230,24 +231,66 @@ def get_seen_errors_as_set():
     return seen_errors
 
 
+def find_start_of_num(affected_file):
+    for i in range(len(affected_file) -1, -1, -1):
+        if affected_file[i] == "/":
+            return i + 1
+
+    sys.stderr.write("Error writing report: a file path was not provided")
+    sys.exit(1)
+
+def custom_sort_key(file_name):
+    start_of_num = find_start_of_num(file_name)
+    numeric_part = file_name[start_of_num:]
+    parts = re.split(r'(\d+)', numeric_part)
+    key = []
+    for part in parts:
+        if part.isdigit():
+            key.append(int(part))  # Convert to integer for proper sorting
+        else:
+            key.append(part.lower())  # Handle string case insensitively
+    return key
+
+
 def write_output_report(output_report):
     with open(REPORT_PATH, 'w') as file:
 
         for report_num, report in enumerate(output_report):
             if report_num == 0:
-                file.write("Unseen errors:")
+                file.write("\n============================\n")
+                file.write("UNSEEN ERRORS:")
+                file.write("\n============================\n")
             elif report_num == 1:
-                file.write("Seen errors:")
+                file.write("\n============================\n")
+                file.write("SEEN ERRORS:")
+                file.write("\n============================\n")
             else:
-                file.write("Differing errors:")
+                file.write("\n============================\n")
+                file.write("DIFFERENTIAL DISCREPANCIES:")
+                file.write("\n============================\n")
 
             for error_type, affected_files in report.items():
                 num_affected_files = str(len(affected_files))
-                csv_of_affected_files = ", ".join(affected_files)
-                file.write("\n" + error_type + "(" + num_affected_files + "): \n")
-                file.write(csv_of_affected_files+"\n")
+                sorted_errors = sorted(affected_files, key=custom_sort_key)
+                formatted_errors_to_print_dawn = "dawn: \n"
+                formatted_errors_to_print_wgpu = "wgpu: \n"
 
-            file.write("\n============================\n")
+                for error in sorted_errors:
+                    start_of_file_num = find_start_of_num(error)
+                    file_num = "\t" + error[start_of_file_num:] + ", \n"
+                    if "dawn" in error:
+                        formatted_errors_to_print_dawn += file_num
+                    else:
+                        formatted_errors_to_print_wgpu += file_num
+
+                file.write("\n" + error_type + "(" + num_affected_files + "): \n")
+
+                if (".log" in formatted_errors_to_print_dawn):
+                    file.write(formatted_errors_to_print_dawn + "\n")
+
+                if (".log" in formatted_errors_to_print_wgpu):
+                    file.write(formatted_errors_to_print_wgpu + "\n")
+
 
 
 def differentially_compare_reports(report_a_output, report_b_output, report_a_path, report_b_path, output_report):
