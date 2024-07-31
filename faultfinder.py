@@ -123,7 +123,7 @@ def parse_file(file_path, seen_errors, output_report):
             elif "errors disabled" in line_to_check:
                 continue
             # Storing any validation errors
-            elif "::" in line_to_check or ("[" in line_to_check and "]" in line_to_check):
+            elif "::" in line_to_check or ("[" in line_to_check and "]" in line_to_check) or ("operationerror" in line_to_check):
                 error_type = "Validation error"
                 full_validation_error = line_to_check
 
