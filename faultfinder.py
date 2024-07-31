@@ -13,8 +13,8 @@ from pathlib import Path
 
 # Should first load the seen_errors.log into a set. Then continuously update both the set and append to the file
 # For generated error report, should first hav a dictionary with error type as key, then list of files
-SEEN_ERRORS_PATH = "D:/final_proj/FaultFinder/seen_errors.log"
-REPORT_PATH = "D:/final_proj/FaultFinder/reports.log"
+SEEN_ERRORS_PATH = "/Users/matthew/Documents/msc/final_proj/FaultFinder/seen_errors.log"
+REPORT_PATH = "/Users/matthew/Documents/msc/final_proj/FaultFinder/reports.log"
 
 
 def update_seen_errors(line_to_compare, seen_errors):
@@ -243,7 +243,7 @@ def differentially_compare_reports(report_a_output, report_b_output, report_a_pa
 
     # report outputs are in the form of a dictionary (error_type: list of errors associated). Parse through each differently
 
-    for error_type, errors_list in report_a_output:
+    for error_type, errors_list in report_a_output.items():
         have_same_errors = True
         report_b_output_errors_list = report_b_output[error_type]
 
@@ -274,10 +274,10 @@ def parse_reports(report_folder_to_check, report_folder_to_compare, seen_errors,
             print(str(file_path) + " skipped because it is not a file")
             continue
 
-        file_to_compare = report_folder_to_compare + file_path.name
+        file_to_compare = Path(report_folder_to_compare + "/" + file_path.name)
 
         # 2) See if there is an equivalently named file in report_folder_to_compare. If not say x was not compared to anything as missing equiavlent file
-        if not file_to_compare.isfile():
+        if not file_to_compare.is_file():
             print(str(file_path) + " skipped because it does not have an equivalent file to compare to")
             continue
 
