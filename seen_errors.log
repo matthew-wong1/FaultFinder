@@ -1,10 +1,9 @@
-typeerror: failed to construct 'gpuoutofmemoryerror': 1 argument required, but only 0 present.
 
-    at new gpuoutofmemoryerror (ext:deno_webgpu/01_webgpu.js:308:12)
+exit code: 133
 
-    at innergpudevice.pusherror (ext:deno_webgpu/01_webgpu.js:1001:28)
+error: destroyed encoder cannot be finished.
 
-summary: addresssanitizer: heap-use-after-free asyncrunner.cpp:63 in wgpu::binding::asyncrunner::queuetick(napi::env)::$_0::operator()(napi::callbackinfo const&) const
+error: bindimagememory failed with vk_error_out_of_device_memory
 
-failed to wait for the device: device is lost
+error: texture view array layer range (basearraylayer: 2, arraylayercount: 6) exceeds the texture's array layer count (5).
 
