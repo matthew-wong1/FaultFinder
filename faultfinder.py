@@ -107,6 +107,7 @@ def parse_file(file_path, seen_errors, output_report):
     lines_of_interest = defaultdict(list)
     errors_enabled = False
     skip_next_line = False
+    crash_messages = ["fatal", "assertion", "core dumped", "panic", "fault", "exception"]
 
     with open(file_path, 'r') as file:
         # Go through each line. If line contains error:
@@ -114,7 +115,6 @@ def parse_file(file_path, seen_errors, output_report):
         check_next_file = False
         error_type = None
         skip_next_line = False
-
 
 
         for i, line in enumerate(lines):
@@ -187,8 +187,7 @@ def parse_file(file_path, seen_errors, output_report):
 
                 error_type = "Program abortion"
 
-            elif "fatal" in line_to_check or "assertion" in line_to_check or 'panic' in line_to_check or 'fault' in line_to_check:
-                # Fatal error - get the fatal error line. and end.
+            elif any(crash_message in line_to_check for crash_message in crash_messages):
                 line_to_compare = line_to_check
                 check_next_file = True
                 error_type = "Crash"
