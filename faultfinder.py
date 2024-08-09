@@ -187,16 +187,12 @@ def parse_file(file_path, seen_errors, output_report):
 
                 error_type = "Program abortion"
 
-            elif "fatal" in line_to_check or "assertion" in line_to_check:
+            elif "fatal" in line_to_check or "assertion" in line_to_check or 'panic' in line_to_check or 'fault' in line_to_check:
                 # Fatal error - get the fatal error line. and end.
                 line_to_compare = line_to_check
                 check_next_file = True
-
-                if "fatal" in line_to_check:
-                    error_type = "Fatal error"
-                else:
-                    error_type = "Assertion failure"
-            elif "error" in line_to_check or "failed" in line_to_check or "panic" in line_to_check:
+                error_type = "Crash"
+            elif 'error' in line_to_check or 'failed' in line_to_check:
                 line_to_compare = line_to_check
                 error_type = "Unexpected error/failure"
             elif "has output" in line_to_check:
