@@ -14,8 +14,8 @@ from pathlib import Path
 
 # Should first load the seen_errors.log into a set. Then continuously update both the set and append to the file
 # For generated error report, should first hav a dictionary with error type as key, then list of files
-SEEN_ERRORS_PATH = "/home/matthew/final_project/FaultFinder/seen_errors.log"
-REPORT_PATH = "/home/matthew/final_project/FaultFinder/reports.log"
+SEEN_ERRORS_PATH = "/Users/matthew/Documents/msc/final_proj/FaultFinder/seen_errors.log"
+REPORT_PATH = "/Users/matthew/Documents/msc/final_proj/FaultFinder/reports.log"
 
 
 def update_seen_errors(line_to_compare, seen_errors):
