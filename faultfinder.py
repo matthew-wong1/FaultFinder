@@ -14,8 +14,8 @@ from pathlib import Path
 
 # Should first load the seen_errors.log into a set. Then continuously update both the set and append to the file
 # For generated error report, should first hav a dictionary with error type as key, then list of files
-SEEN_ERRORS_PATH = "/Users/matthew/Documents/msc/final_proj/FaultFinder/seen_errors.log"
-REPORT_PATH = "/Users/matthew/Documents/msc/final_proj/FaultFinder/reports.log"
+SEEN_ERRORS_PATH = "D:/final_proj/FaultFinder/seen_errors.log"
+REPORT_PATH = "D:/final_proj/FaultFinder/reports.log"
 
 
 def update_seen_errors(line_to_compare, seen_errors):
@@ -240,9 +240,10 @@ def get_seen_errors_as_set():
 
 def find_start_of_num(affected_file):
     for i in range(len(affected_file) -1, -1, -1):
-        if affected_file[i] == "/":
+        if affected_file[i] == "/" or affected_file[i] == "\\":
             return i + 1
 
+    print(affected_file)
     sys.stderr.write("Error writing report: a file path was not provided")
     sys.exit(1)
 
