@@ -1,5 +1,6 @@
 import re
 import sys
+import os
 from collections import defaultdict, Counter
 from pathlib import Path
 
@@ -14,8 +15,10 @@ from pathlib import Path
 
 # Should first load the seen_errors.log into a set. Then continuously update both the set and append to the file
 # For generated error report, should first hav a dictionary with error type as key, then list of files
-SEEN_ERRORS_PATH = "D:/final_proj/FaultFinder/seen_errors.log"
-REPORT_PATH = "D:/final_proj/FaultFinder/reports.log"
+current_dir = os.getcwd()
+
+SEEN_ERRORS_PATH = os.path.join(current_dir, "seen_errors.log")
+REPORT_PATH = os.path.join(current_dir, "reports.log")
 
 
 def update_seen_errors(line_to_compare, seen_errors):
