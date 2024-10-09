@@ -144,13 +144,16 @@ def parse_file(file_path, seen_errors, output_report):
                 error_type = "Validation error"
                 full_validation_error = line_to_check
 
-                if "While calling" in lines[i + 1]:
-                    full_validation_error += lines[i+1]
+                try:
+                    if "While calling" in lines[i + 1]:
+                        full_validation_error += lines[i+1]
 
-                # Format full validation error into form: label
-                line_to_compare = format_validation_error(full_validation_error)
+                    # Format full validation error into form: label
+                    line_to_compare = format_validation_error(full_validation_error)
 
-                lines_of_interest[error_type].append(line_to_compare)
+                    lines_of_interest[error_type].append(line_to_compare)
+                except IndexError:
+                    pass
 
                 # don't update report
                 continue

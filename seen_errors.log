@@ -1,0 +1,154 @@
+error creating pipeline state compiler encountered an internal error
+
+error while parsing wgsl: :334:85 error: '4294967295 << 1' cannot be represented as 'u32'
+
+1 error(s) generated while compiling the shader:
+
+:334:85 error: '4294967295 << 1' cannot be represented as 'u32'
+
+error while parsing wgsl: :332:36 error: parsed as template list
+
+:332:36 error: parsed as template list
+
+error while parsing wgsl: :421:40 error: parsed as template list
+
+:421:40 error: parsed as template list
+
+error while parsing wgsl: :594:119 error: '52011 << 28' cannot be represented as 'u32'
+
+:594:119 error: '52011 << 28' cannot be represented as 'u32'
+
+error while parsing wgsl: :374:32 error: parsed as template list
+
+:374:32 error: parsed as template list
+
+error while parsing wgsl: :258:78 error: shift left operation results in sign change
+
+:258:78 error: shift left operation results in sign change
+
+error while parsing wgsl: :308:510 error: parsed as template list
+
+:308:510 error: parsed as template list
+
+error while parsing wgsl: :660:100 error: '4294967295 << 6' cannot be represented as 'u32'
+
+:660:100 error: '4294967295 << 6' cannot be represented as 'u32'
+
+error while parsing wgsl: :502:212 error: parsed as template list
+
+:502:212 error: parsed as template list
+
+error while parsing wgsl: :397:203 error: parsed as template list
+
+:397:203 error: parsed as template list
+
+error while parsing wgsl: :373:41 error: parsed as template list
+
+:373:41 error: parsed as template list
+
+error creating pipeline state compute function exceeds available stack space
+
+error while parsing wgsl: :359:243 error: parsed as template list
+
+:370:354 error: parsed as template list
+
+2 error(s) generated while compiling the shader:
+
+:359:243 error: parsed as template list
+
+error while parsing wgsl: :441:77 error: '4294967295 << 17' cannot be represented as 'u32'
+
+:441:77 error: '4294967295 << 17' cannot be represented as 'u32'
+
+error while parsing wgsl: :317:459 error: parsed as template list
+
+:317:459 error: parsed as template list
+
+error while parsing wgsl: :379:770 error: parsed as template list
+
+:379:770 error: parsed as template list
+
+error while parsing wgsl: :322:202 error: parsed as template list
+
+:322:202 error: parsed as template list
+
+error while parsing wgsl: :594:47 error: '4294967295 << 20' cannot be represented as 'u32'
+
+:594:47 error: '4294967295 << 20' cannot be represented as 'u32'
+
+error while parsing wgsl: :437:140 error: '56225 << 19' cannot be represented as 'u32'
+
+:437:140 error: '56225 << 19' cannot be represented as 'u32'
+
+error while parsing wgsl: :669:1140 error: '4294887566 << 10' cannot be represented as 'u32'
+
+:669:1140 error: '4294887566 << 10' cannot be represented as 'u32'
+
+error while parsing wgsl: :345:755 error: '4294967295 << 17' cannot be represented as 'u32'
+
+:345:755 error: '4294967295 << 17' cannot be represented as 'u32'
+
+error while parsing wgsl: :591:193 error: parsed as template list
+
+:591:193 error: parsed as template list
+
+error while parsing wgsl: :433:109 error: '30825 << 31' cannot be represented as 'u32'
+
+:433:109 error: '30825 << 31' cannot be represented as 'u32'
+
+error while parsing wgsl: :590:87 error: '42694 << 18' cannot be represented as 'u32'
+
+:590:87 error: '42694 << 18' cannot be represented as 'u32'
+
+error while parsing wgsl: :376:975 error: parsed as template list
+
+:376:975 error: parsed as template list
+
+error while parsing wgsl: :450:354 error: shift left operation results in sign change
+
+:450:354 error: shift left operation results in sign change
+
+error while parsing wgsl: :447:122 error: parsed as template list
+
+:447:122 error: parsed as template list
+
+error while parsing wgsl: :581:7803 error: shift left operation results in sign change
+
+:581:7803 error: shift left operation results in sign change
+
+error while parsing wgsl: :422:781 error: parsed as template list
+
+:422:781 error: parsed as template list
+
+error while parsing wgsl: :464:504 error: '4294907167 << 31' cannot be represented as 'u32'
+
+:464:504 error: '4294907167 << 31' cannot be represented as 'u32'
+
+error while parsing wgsl: :295:264 error: '4347 << 31' cannot be represented as 'u32'
+
+:295:264 error: '4347 << 31' cannot be represented as 'u32'
+
+error while parsing wgsl: :306:162 error: parsed as template list
+
+:306:162 error: parsed as template list
+
+error while parsing wgsl: :251:46 error: '42166 << 31' cannot be represented as 'u32'
+
+:251:46 error: '42166 << 31' cannot be represented as 'u32'
+
+error while parsing wgsl: :502:152 error: '21942 << 20' cannot be represented as 'u32'
+
+:502:152 error: '21942 << 20' cannot be represented as 'u32'
+
+error while parsing wgsl: :442:750 error: parsed as template list
+
+:442:750 error: parsed as template list
+
+error while parsing wgsl: :326:78 error: shift left operation results in sign change
+
+:326:78 error: shift left operation results in sign change
+
+error while parsing wgsl: :575:186 error: parsed as template list
+
+:575:186 error: parsed as template list
+
